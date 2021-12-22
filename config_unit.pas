@@ -42,9 +42,10 @@ type
     csdiUpdate,         // downloaded updates
     csdiLogs            // log files and log properties
     );
-    
+
   TconfigSystemFileID =
     (
+    csfiConfig,         //< The 'ini' file.
     csfi_85a_temp,      //<
     csfiAdobePrint,     //<
     csfiB6Startup,      //<
@@ -62,7 +63,7 @@ type
     csfiFileViewBkp,    //<
     csfiFullScreen,     //<
     csfiGreenHelmet,    //<
-    csfiJotterBkp,         //<
+    csfiJotterBkp,      //<
     csfiJotter,         //<
     csfiLinkView,       //<
     csfiMapShot,        //<
@@ -128,7 +129,8 @@ type
     // Return a path created from a system data directory and a file name
     class function MakeFilePath(csdi: TconfigSystemDirId; Fname: string): string; overload;
 
-    class function IniFileName: string;
+    // Write the location of each of the "well known" directories/files to the log
+    class procedure WriteToLog;
 
   private
     class var configLocalDirName: string;
@@ -163,6 +165,13 @@ type
 
 
 implementation
+
+uses
+  TLoggerUnit;
+
+var
+  log: ILogger;
+
 
 // === First a small utility function ...  ===
 
@@ -255,14 +264,17 @@ var
   idName: string;
 begin
   configLocalDirName := GetAppConfigDir(False);
+  // TODO: The following line should replace the one above once we have
+  // an installer which can put the read-only attributes in a system directory.
   //configGlobalDirName := GetAppConfigDir(True);
   configGlobalDirName := configlocalDirName;
   configFileName := GetAppConfigFile(False);
   configFile := TIniFile.Create(ConfigFileName);
+  systemFileData[csfiConfig] := configFileName;
 
   dataDirName := GetUserDir() + 'openTemplot';
 
-{ TODO : Log the above names here once the logging facility is decided }
+  { TODO : Log the above names here once the logging facility is decided }
 
   LoadDir(cudiBoxes, 'boxes', [dataDirName, 'box-files']);
   LoadDir(cudiData, 'data', [dataDirName, '']);
@@ -411,14 +423,17 @@ begin
   configFile.WriteString('directories', cfgKey, Value);
 end;
 
-class function Config.IniFileName: string;
-begin
-  Result := configFileName;
-end;
-
 class function Config.GetFilePath(csfi: TconfigSystemFileID): String;
 begin
   Result := systemFileData[csfi];
+end;
+
+class procedure Config.WriteToLog();
+begin
+  log := Logger.GetInstance('Config');
+  log.Info('             Config File : ' + configFileName);
+  log.Info('  Local config directory : ' + configLocalDirName);
+  log.Info(' Global config directory : ' + configGlobalDirName);
 end;
 
 end.
