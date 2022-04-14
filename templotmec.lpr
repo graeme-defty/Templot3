@@ -1,4 +1,3 @@
-
 (*
 
     This file is part of Templot3, a computer program for the design of model railway track.
@@ -31,8 +30,13 @@ uses
 
            // Lazarus units:
 
-  Forms, Interfaces, SysUtils, Dialogs, FileUtil, Classes,
-
+  Classes,
+  Dialogs,
+  FileUtil,
+  Forms,
+  Interfaces,
+  SysUtils,
+  uniqueinstanceraw,
 
            // Templot3 units:
 
@@ -114,6 +118,12 @@ var
   log: ILogger;
 
 begin
+  if InstanceRunning() then begin
+     ShowMessage('Only one instance of OpenTemplot is allowed at a time,' +#13+
+                         'and you already have an instance running.');
+     exit();
+  end;
+
   RequireDerivedFormResource:=True;
 
   Application.Title:='Templot3';
@@ -148,8 +158,6 @@ begin
           end;
 
   { OT-FIRST
-  abandon_if_existing_instance;       // see in the startup_unit.  24-7-01.
-
   force_printer_to_init;              // 0.93.a in the startup unit.
   }
 
