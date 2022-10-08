@@ -30,7 +30,7 @@
 ====================================================================================
 *)
 
-unit print_settings_unit;
+unit print_settings;
 
 {$MODE Delphi}
 
@@ -41,60 +41,35 @@ uses
   ExtCtrls, ComCtrls, StdCtrls, Buttons, Menus;
 
 type
-  Tprint_settings_form = class(TForm)
-    top_label: TLabel;
-    blue_corner_panel: TPanel;
-    size_updown: TUpDown;
-    datestamp_label: TLabel;
-    spacer_label: TLabel;
-    close_panel: TPanel;
-    close_button: TButton;
-    output_rails_checkbox: TCheckBox;
-    output_centrelines_checkbox: TCheckBox;
-    output_timbering_checkbox: TCheckBox;
-    output_radial_centres_checkbox: TCheckBox;
-    output_bgnd_shapes_checkbox: TCheckBox;
-    output_fb_foot_lines_checkbox: TCheckBox;
-    output_radial_ends_checkbox: TCheckBox;
-    Label1: TLabel;
-    output_switch_labels_checkbox: TCheckBox;
-    Label2: TLabel;
-    Label3: TLabel;
-    output_sketchboard_items_checkbox: TCheckBox;
-    Label4: TLabel;
-    Label5: TLabel;
-    Label6: TLabel;
-    output_xing_labels_checkbox: TCheckBox;
-    output_chairs_checkbox: TCheckBox;
-    output_timber_centres_checkbox: TCheckBox;
-    output_timber_numbers_checkbox: TCheckBox;
-    output_timber_extensions_checkbox: TCheckBox;
-    Label7: TLabel;
-    Label8: TLabel;
-    Label9: TLabel;
-    output_rail_joints_checkbox: TCheckBox;
-    output_guide_marks_checkbox: TCheckBox;
-    output_switch_drive_checkbox: TCheckBox;
-    output_timb_id_prefix_checkbox: TCheckBox;
-    output_platforms_checkbox: TCheckBox;
-    output_trackbed_edges_checkbox: TCheckBox;
-    Shape2: TShape;
-    //procedure rails_indicator_shapeMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-    //procedure rails_indicator_shapeMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-    procedure size_updownClick(Sender: TObject; Button: TUDBtnType);
-    procedure FormCreate(Sender: TObject);
-    procedure close_buttonClick(Sender: TObject);
-    procedure output_timbering_checkboxClick(Sender: TObject);
-    procedure output_timber_numbers_checkboxClick(Sender: TObject);
-  private
-    { Private declarations }
-  public
-    { Public declarations }
+//  This structure stores the values from the print_settings form
+  TPrintSettings = record
+
+    want_rails:                boolean;
+    want_centrelines:          boolean;
+    want_timbering:            boolean;
+    want_radial_centres:       boolean;
+    want_bgnd_shapes:          boolean;
+    want_fb_foot_lines:        boolean;
+    want_radial_ends:          boolean;
+    want_switch_labels:        boolean;
+    want_sketchboard_items:    boolean;
+    want_xing_labels:          boolean;
+    want_chairs:               boolean;
+    want_timber_centres:       boolean;
+    want_timber_numbers:       boolean;
+    want_timber_extensions:    boolean;
+    want_rail_joints:          boolean;
+    want_guide_marks:          boolean;
+    want_switch_drive:         boolean;
+    want_timb_id_prefix:       boolean;
+    want_platforms:            boolean;
+    want_trackbed_edges:       boolean;
+
   end;
 
 var
-  print_settings_form: Tprint_settings_form;
 
+  printSettings: TprintSettings;
 
   //  printer default colours and line widths...
 
@@ -191,50 +166,9 @@ procedure delete_fb_kludge_templates;
 
 implementation
 
-{$R *.lfm}
-
 uses control_room, pad_unit, math_unit, keep_select, help_sheet, shove_timber, wait_message,
   shoved_timber, template;
 
-//______________________________________________________________________________
-
-procedure Tprint_settings_form.size_updownClick(Sender: TObject; Button: TUDBtnType);
-
-begin
-  if size_updown.Position > size_updown.Tag
-  // ! position goes up, size goes down.
-  then
-    ScaleBy(9, 10);                                           // scale the form contents down.
-
-  if size_updown.Position < size_updown.Tag then
-    ScaleBy(10, 9);                                           // scale the form contents up.
-
-  ClientHeight := VertScrollBar.Range;                               // allow 4 pixel right margin.
-  ClientWidth := HorzScrollBar.Range + 4;
-  // don't need bottom margin - datestamp label provides this.
-  ClientHeight := VertScrollBar.Range;
-  // do this twice, as each affects the other.
-
-  size_updown.Tag := size_updown.Position;
-  // and save for the next click.
-end;
-//___________________________________________________________________________
-
-procedure Tprint_settings_form.FormCreate(Sender: TObject);
-
-begin
-  ClientWidth := 480;
-  ClientHeight := 632;
-
-  AutoScroll := False;
-end;
-//______________________________________________________________________________
-
-procedure Tprint_settings_form.close_buttonClick(Sender: TObject);
-
-begin
-  Close;
-end;
 //______________________________________________________________________________
 
 function highest_fb_kludge_template: integer;  // 0.94.a return highest index of a kludge template.
@@ -291,7 +225,7 @@ begin
   for n := 0 to (keeps_list.Count - 1) do begin
     if keeps_list[n].bg_copied = False then
       CONTINUE;
-    if keeps_list[n].template_info.keep_dims.box_dims1.align_info.cl_only_flag = True then
+    if keeps_list[n].template_info.keep_dims.box_dims1.align_info.cl_only_flag then
       CONTINUE;    // 212a
     if keeps_list[n].template_info.keep_dims.box_dims1.rail_type = 2 then
       Result := Result + 1;             // return count.
@@ -343,7 +277,7 @@ begin
     n_max := keeps_list.Count - 1;
 
     for n := 0 to n_max do begin
-      if (keeps_list[n].bg_copied = True)
+      if keeps_list[n].bg_copied
         // bgnd template
         and (keeps_list[n].template_info.keep_dims.box_dims1.align_info.cl_only_flag =
         False)  // template has rails   212a
@@ -372,7 +306,7 @@ begin
 
         railedges(gauge_faces, outer_edges, centre_lines);   // use these switches.
 
-        if pad_form.gen_inner_foot_edges_menu_entry.Checked = True then begin
+        if pad_form.gen_inner_foot_edges_menu_entry.Checked then begin
           fb_kludge := 1;     // template for inner edge
           gocalc(1, 0);
           store_and_background(False, False);
@@ -385,7 +319,7 @@ begin
           Inc(Count);
         end;
 
-        if pad_form.gen_outer_foot_edges_menu_entry.Checked = True then begin
+        if pad_form.gen_outer_foot_edges_menu_entry.Checked then begin
           fb_kludge := 2;      // template for outer edge
           gocalc(1, 0);
           store_and_background(False, False);
@@ -457,7 +391,7 @@ begin
       end;
     end;//with
 
-    if keeps_list[n].bg_copied = True then
+    if keeps_list[n].bg_copied then
       wipe_it(n);  // any data on background
 
     keeps_list.Delete(n);
@@ -466,25 +400,4 @@ begin
 
   end;//while              // no need to increment n, it is now pointing to the next keep.
 end;
-//______________________________________________________________________________
-
-procedure Tprint_settings_form.output_timbering_checkboxClick(Sender: TObject);
-
-begin
-  output_timber_centres_checkbox.Enabled := output_timbering_checkbox.Checked;
-  output_timber_numbers_checkbox.Enabled := output_timbering_checkbox.Checked;
-  output_timber_extensions_checkbox.Enabled := output_timbering_checkbox.Checked;
-
-  output_timb_id_prefix_checkbox.Enabled :=
-    (output_timbering_checkbox.Checked) and (output_timber_numbers_checkbox.Checked);
-end;
-//______________________________________________________________________________
-
-procedure Tprint_settings_form.output_timber_numbers_checkboxClick(Sender: TObject);
-
-begin
-  output_timb_id_prefix_checkbox.Enabled := output_timber_numbers_checkbox.Checked;
-end;
-//______________________________________________________________________________
-
 end.

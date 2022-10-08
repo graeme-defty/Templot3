@@ -185,7 +185,7 @@ uses
   background_shapes,
   bgnd_unit, bgkeeps_unit, help_sheet,
   stay_visible_unit, panning_unit, shove_timber, grid_unit, edit_memo_unit,
-  print_settings_unit, print_now_box, { OT-FIRST dtp_settings_unit,} export_unit,
+  print_settings, print_now_box, { OT-FIRST dtp_settings_unit,} export_unit,
   { OT-FIRST dtp_unit,} rail_options_unit, platform_unit, check_diffs_unit,
   data_memo_unit,
   trackbed_unit, make_slip_unit,
@@ -667,7 +667,7 @@ var
         if rail_joints = (mark_code <> eMC_6_RailJoint) then
           CONTINUE;  // do only the rail joints if rail_joints=True and ignore them otherwise.
 
-        if print_settings_form.output_timbering_checkbox.Checked = False then begin
+        if not printSettings.want_timbering then begin
           case mark_code of
             eMC_3_TimberOutline,
             eMC_4_TimberCL,
@@ -687,7 +687,7 @@ var
           end;//case
         end;
 
-        if print_settings_form.output_radial_ends_checkbox.Checked = False then begin
+        if not printSettings.want_radial_ends then begin
           case mark_code of
             eMC_2_RadialEnd,
             eMC_7_TransitionAndSlewing:
@@ -695,14 +695,14 @@ var
           end;//case
         end;
 
-        if print_settings_form.output_switch_labels_checkbox.Checked = False then begin
+        if not printSettings.want_switch_labels then begin
           case mark_code of
             eMC_600_LongMark .. eMC_605_SWitchLabelEnd:
               CONTINUE;     // no long marks or switch labels wanted  206b
           end;//case
         end;
 
-        if print_settings_form.output_xing_labels_checkbox.Checked = False then begin
+        if not printSettings.want_xing_labels then begin
           case mark_code of
             eMC_700_XingLongMark .. eMC_703_XingLabelEnd:
               CONTINUE;     // no long marks or crossing labels wanted  211b
@@ -903,7 +903,7 @@ var
           if ((mark_code = eMC__2_CurvingRadiusCentre_1)
             or (mark_code = eMC__3_CurvingRadiusCentre_2)) and
             {(pad_form.print_radial_centres_menu_entry.Checked=True)}// 0.82.b
-            (print_settings_form.output_radial_centres_checkbox.Checked = True)
+            (printSettings.want_radial_centres = True)
           // draw curving rad centres...
 
           then begin
@@ -2448,9 +2448,9 @@ begin
                 draw_marks(grid_left, grid_top, False);
                 // print all the background timbering and marks except rail joints.
 
-                if ((print_settings_form.output_centrelines_checkbox.Checked = True) and
+                if ((printSettings.want_centrelines) and
                   (dummy_template = False))       // 212a
-                  or ((print_settings_form.output_bgnd_shapes_checkbox.Checked = True) and
+                  or ((printSettings.want_bgnd_shapes) and
                   (dummy_template = True)) then begin
 
                   Brush.Color := clWhite;  // 0.93.a gaps in dotted lines.
@@ -2512,7 +2512,7 @@ begin
                   end;//for-next aq
                 end;//if track centre-lines.
 
-                if print_settings_form.output_rails_checkbox.Checked = True then begin
+                if printSettings.want_rails then begin
 
                   //drawn_full_aq1:=True;    // default init flags.
                   //drawn_full_aq2:=True;
@@ -3682,7 +3682,7 @@ var
   raster_rect: TRect;
 
 begin
-  if print_settings_form.output_bgnd_shapes_checkbox.Checked = False then
+  if not printSettings.want_bgnd_shapes then
     EXIT;
 
   maxbg_index := bgnd_form.bgnd_shapes_listbox.Items.Count - 1;
@@ -4126,7 +4126,7 @@ begin
           if rail_joints = (code <> eMC_6_RailJoint) then
             CONTINUE;  // do only the rail joints if rail_joints=True and ignore them otherwise.
 
-          if print_settings_form.output_timbering_checkbox.Checked = False then begin
+          if not printSettings.want_timbering then begin
             case code of
               eMC_3_TimberOutline,
               eMC_4_TimberCL,
@@ -4146,7 +4146,7 @@ begin
             end;//case
           end;
 
-          if print_settings_form.output_radial_ends_checkbox.Checked = False then begin
+          if not printSettings.want_radial_ends then begin
             case code of
               eMC_2_RadialEnd,
               eMC_7_TransitionAndSlewing:
@@ -4154,7 +4154,7 @@ begin
             end;//case
           end;
 
-          if print_settings_form.output_switch_labels_checkbox.Checked = False then begin
+          if not printSettings.want_switch_labels then begin
             case code of
               eMC_600_LongMark,
               eMC_601_TipsLabel .. eMC_605_JoggleLabel:
@@ -4162,7 +4162,7 @@ begin
             end;//case
           end;
 
-          if print_settings_form.output_xing_labels_checkbox.Checked = False then begin
+          if not printSettings.want_xing_labels then begin
             case code of
               eMC_700_XingLongMark .. eMC_703_XingTipsLabel:
                 CONTINUE;     // no long marks or crossing labels wanted  211b
@@ -4325,7 +4325,7 @@ begin
             if ((code = eMC__2_CurvingRadiusCentre_1)
               or (code = eMC__3_CurvingRadiusCentre_2)) and
               {(pad_form.print_radial_centres_menu_entry.Checked=True)}// 0.82.b
-              (print_settings_form.output_radial_centres_checkbox.Checked = True)
+              (printSettings.want_radial_centres)
             // draw curving rad centres...
             then begin
               if impact > 0 then
@@ -5690,7 +5690,7 @@ begin          // print background templates...
         CONTINUE;  // not in group. 0.78.b 10-12-02.
 
       if (keeps_list[n].template_info.keep_dims.box_dims1.fb_kludge_template_code > 0)  // 209c
-        and (print_settings_form.output_fb_foot_lines_checkbox.Checked = False) then
+        and not printSettings.want_fb_foot_lines then
         CONTINUE;                                                      // foot lines not wanted.
 
       this_one_platforms_trackbed :=
@@ -5749,9 +5749,9 @@ begin          // print background templates...
             if output_diagram_mode = True then
               pbg_draw_diagram_mode;  // first draw template in diagrammatic mode.
 
-            if ((print_settings_form.output_centrelines_checkbox.Checked = True) and
+            if ((printSettings.want_centrelines) and
               (output_diagram_mode = False) and (box_dims1.align_info.dummy_template_flag =
-              False)) or ((print_settings_form.output_bgnd_shapes_checkbox.Checked = True) and
+              False)) or ((printSettings.want_bgnd_shapes) and
               (box_dims1.align_info.dummy_template_flag = True))
             // 212a dummy templates not part of track plan
 
@@ -5830,7 +5830,7 @@ begin          // print background templates...
 
         end;//with template
 
-        if print_settings_form.output_rails_checkbox.Checked = True then begin
+        if printSettings.want_rails then begin
 
           //drawn_full_aq1:=True;    // default init flags.
           //drawn_full_aq2:=True;
@@ -5892,13 +5892,13 @@ begin          // print background templates...
                   rdAdjTrackMainSideFarGaugeFace] do begin
                 case rail of     // 223d
                   rdAdjTrackTurnoutSideNearGaugeFace, rdAdjTrackMainSideNearGaugeFace:
-                    if print_settings_form.output_platforms_checkbox.Checked = True then
+                    if printSettings.want_platforms then
                       pbg_draw_fill_rail;        // platforms
                   rdAdjTrackTurnoutSideFarGaugeFace, rdAdjTrackMainSideFarGaugeFace:
                     if not ((output_diagram_mode = True) and
                       (output_include_trackbed_edges = False))
                     then begin
-                      if print_settings_form.output_trackbed_edges_checkbox.Checked = True then
+                      if printSettings.want_trackbed_edges then
                         pbg_draw_fill_rail;   // trackbed edges
                     end;
                 end;//case
@@ -5967,7 +5967,7 @@ begin          // print background templates...
 
   // finally add the rail-joint marks over the rail infill...   // 209c moved outside loop
 
-  if (print_settings_form.output_rails_checkbox.Checked = True) and
+  if (printSettings.want_rails) and
     (output_diagram_mode = False) then
     print_bgnd_marks(grid_left, grid_top, max_list_index, True);
 

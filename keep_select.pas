@@ -708,7 +708,7 @@ uses
   alert_unit, math_unit,     // moved up 290a
   xing_select, entry_sheet, gauge_unit, colour_unit, info_unit, chat_unit, print_unit,
   dxf_unit, bgkeeps_unit, grid_unit, Clipbrd, edit_memo_unit, wait_message, shove_timber,
-  jotter_unit, print_settings_unit, data_memo_unit,
+  jotter_unit, print_settings, data_memo_unit,
   MetaFilePrinter, { OT-FIRST file_viewer,} panning_unit, mecbox_unit,
   t2box_unit,
   curve,

@@ -207,7 +207,7 @@ uses Printers, control_room, grid_unit, alert_unit, math_unit, calibration_unit,
   bgkeeps_unit,
   background_shapes,
   bgnd_unit, print_unit, info_unit, help_sheet,
-  print_settings_unit, pdf_unit, { OT-FIRST dtp_unit, dtp_settings_unit,} export_unit,
+  print_settings, pdf_unit, { OT-FIRST dtp_unit, dtp_settings_unit,} export_unit,
   rail_data_unit,
   template;
 
@@ -1291,8 +1291,8 @@ begin
 
       bgs_count := bgnd_form.bgnd_shapes_listbox.Items.Count;
 
-      if (pad_form.preview_background_shapes_menu_entry.Checked = True) // 206e
-        and (print_settings_form.output_bgnd_shapes_checkbox.Checked = True) and
+      if (pad_form.preview_background_shapes_menu_entry.Checked) // 206e
+        and printSettings.want_bgnd_shapes and
         (bgs_count > 0) then begin
         Font.Assign(shapes_label_font);      // for labels.
 
@@ -2168,7 +2168,7 @@ begin
       // first draw any background shapes (ignoring page outlines and empty pages)...
 
       maxbg := bgnd_form.bgnd_shapes_listbox.Items.Count;
-      if (print_settings_form.output_bgnd_shapes_checkbox.Checked = True) and (maxbg > 0) then
+      if printSettings.want_bgnd_shapes and (maxbg > 0) then
       begin
         Font.Assign(shapes_label_font);      // for shape labels.
 

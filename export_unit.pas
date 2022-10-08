@@ -190,7 +190,7 @@ uses
   LCLType, LCLIntf,
   config_unit, control_room, point_ex,
   pad_unit, keep_select, math_unit, preview_unit, entry_sheet, help_sheet,
-     { OT-FIRST dtp_unit, dtp_settings_unit,} alert_unit, grid_unit, pdf_unit, print_settings_unit,colour_unit,
+     { OT-FIRST dtp_unit, dtp_settings_unit,} alert_unit, grid_unit, pdf_unit, print_settings,colour_unit,
   bgnd_unit, dxf_unit, image_viewer_unit,
   export_draw_unit;  // 291a
 

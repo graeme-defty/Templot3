@@ -209,7 +209,7 @@ uses
   background_shapes,
   dummy_vehicle,
   bgnd_unit, bgkeeps_unit, math_unit, Math, preview_unit,
-  colour_unit, help_sheet, shove_timber, keep_select, print_settings_unit,
+  colour_unit, help_sheet, shove_timber, keep_select, print_settings,
   { OT-FIRST dtp_unit, dtp_settings_unit,} export_unit, { OT-FIRST pdf_unit,} entry_sheet,
   alert_unit,
   action_unit,

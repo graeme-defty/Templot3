@@ -3955,7 +3955,8 @@ uses
   edit_memo_unit,
   jotter_unit,
   rail_options_unit,
-  print_settings_unit,
+  print_settings,
+  print_settings_form,
   { OT-FIRST sketchboard_unit, pdf_unit, dtp_unit, dtp_settings_unit,}
   startup_unit,
   print_now_box,
@@ -22383,7 +22384,7 @@ procedure Tpad_form.printed_element_options_menu_entryClick(Sender: TObject);
 // 0.82.b
 
 begin
-  do_show_modal(print_settings_form);     // 212a  ShowModal   print_settings_form.ShowModal;
+  do_show_modal(printSettingsForm);     // 212a  ShowModal   print_settings_form.ShowModal;
 end;
 //_________________________________________________________________________________________
 
@@ -23210,13 +23211,12 @@ procedure Tpad_form.detail_mode_normal_menu_entryClick(Sender: TObject);
 begin
   detail_mode_normal_menu_entry.Checked := True;  // radio item
 
-  with print_settings_form do begin
+  with printSettings do begin
 
-    output_rails_checkbox.Checked := True;
-    output_timbering_checkbox.Checked := True;
-    output_bgnd_shapes_checkbox.Checked := True;
-
-    output_centrelines_checkbox.Checked := True;
+    want_rails := True;
+    want_timbering := True;
+    want_bgnd_shapes := True;
+    want_centrelines := True;
 
   end;//with
 
@@ -23229,13 +23229,12 @@ procedure Tpad_form.detail_thick_cl_only_menu_entryClick(Sender: TObject);
 begin
   detail_thick_cl_only_menu_entry.Checked := True;  // radio item
 
-  with print_settings_form do begin
+  with printSettings do begin
 
-    output_rails_checkbox.Checked := False;
-    output_timbering_checkbox.Checked := False;
-    output_bgnd_shapes_checkbox.Checked := False;
-
-    output_centrelines_checkbox.Checked := True;
+    want_rails := False;
+    want_timbering := False;
+    want_bgnd_shapes := False;
+    want_centrelines := True;
 
   end;//with
 

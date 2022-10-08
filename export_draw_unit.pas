@@ -61,7 +61,7 @@ implementation
 
 
 uses
-  control_room, pad_unit, math_unit, export_unit, print_settings_unit,
+  control_room, pad_unit, math_unit, export_unit, print_settings,
   preview_unit, print_unit, background_shapes, bgnd_unit,
   rail_data_unit, mark_unit, template;
 
@@ -407,7 +407,7 @@ var
           CONTINUE;
         // ignore mark entries with code zero (might be the second or third of a multi-mark entry, e.g. for timber infill).
 
-        if print_settings_form.output_rail_joints_checkbox.Checked = False    // 223d
+        if printSettings.want_rail_joints = False    // 223d
         then begin
           case mark_code of
             eMC_6_RailJoint:
@@ -420,7 +420,7 @@ var
         if rail_joints = (mark_code <> eMC_6_RailJoint) then
           CONTINUE;  // do only the rail joints if rail_joints=True and ignore them otherwise.
 
-        if print_settings_form.output_timbering_checkbox.Checked = False then begin
+        if printSettings.want_timbering = False then begin
           case mark_code of
             eMC_3_TimberOutline,
             eMC_4_TimberCL,
@@ -440,7 +440,7 @@ var
           end;//case
         end;
 
-        if print_settings_form.output_timber_centres_checkbox.Checked = False    // 223d
+        if printSettings.want_timber_centres = False    // 223d
         then begin
           case mark_code of
             eMC_4_TimberCL,
@@ -451,7 +451,7 @@ var
           end;//case
         end;
 
-        if print_settings_form.output_guide_marks_checkbox.Checked = False    // 223d
+        if printSettings.want_guide_marks = False    // 223d
         then begin
           case mark_code of
             eMC_1_GuideMark:
@@ -459,7 +459,7 @@ var
           end;//case
         end;
 
-        if print_settings_form.output_switch_drive_checkbox.Checked = False    // 223d
+        if printSettings.want_switch_drive = False    // 223d
         then begin
           case mark_code of
             eMC_101_SwitchDrive:
@@ -467,14 +467,14 @@ var
           end;//case
         end;
 
-        if print_settings_form.output_chairs_checkbox.Checked = False then begin
+        if printSettings.want_chairs = False then begin
           case mark_code of
             eMC_480_ChairStart .. eMC_499_ChairEnd:
               CONTINUE;     // no chair outlines wanted  221a
           end;//case
         end;
 
-        if print_settings_form.output_radial_ends_checkbox.Checked = False then begin
+        if printSettings.want_radial_ends = False then begin
           case mark_code of
             eMC_2_RadialEnd,
             eMC_7_TransitionAndSlewing:
@@ -616,7 +616,7 @@ var
 
           if ((mark_code = eMC__2_CurvingRadiusCentre_1) or
             (mark_code = eMC__3_CurvingRadiusCentre_2)) and
-            (print_settings_form.output_radial_centres_checkbox.Checked = True)
+            (printSettings.want_radial_centres = True)
 
           // draw curving rad centres...
 
@@ -1762,9 +1762,9 @@ begin
         draw_marks(grid_left, grid_top, False);
         // print all the background timbering and marks except rail joints.
 
-        if ((print_settings_form.output_centrelines_checkbox.Checked = True) and
+        if ((printSettings.want_centrelines = True) and
           (dummy_template = False))       // 212a
-          or ((print_settings_form.output_bgnd_shapes_checkbox.Checked = True) and
+          or ((printSettings.want_bgnd_shapes = True) and
           (dummy_template = True)) then begin
 
           Brush.Color := clWhite;  // 0.93.a gaps in dotted lines.
@@ -1817,7 +1817,7 @@ begin
         end;//if track centre-lines.
 
         if {pad_form.print_rails_menu_entry.Checked=True}  // 0.82.b
-        print_settings_form.output_rails_checkbox.Checked = True then begin
+        printSettings.want_rails = True then begin
           //  draw turnout rails...
 
           Pen.Width := printrail_wide;
@@ -1975,7 +1975,7 @@ begin
 
   { OT-first  223d rebuild generator functions nyi
 
-  if (print_settings_form.output_timber_extensions_checkbox.Checked=False) and (print_settings_form.output_timbering_checkbox.Checked=True)   // 223d   rebuild templates if necessary
+  if (printSettings.want_timber_extensions_checkbox.Checked=False) and (print_settings_form.output_timbering=True)   // 223d   rebuild templates if necessary
      then begin
             saved_extensions:=outline_extensions;
 
@@ -2023,7 +2023,7 @@ var
   raster_rect: TRect;
 
 begin
-  if print_settings_form.output_bgnd_shapes_checkbox.Checked = False then
+  if printSettings.want_bgnd_shapes = False then
     EXIT;
 
   maxbg_index := bgnd_form.bgnd_shapes_listbox.Items.Count - 1;
@@ -2445,7 +2445,7 @@ begin
             // no name label, timber selector, peg centre, blank, peg arms, plain-track end marks.    // 0.94.a no check-rail labels
           end;//case
 
-          if print_settings_form.output_rail_joints_checkbox.Checked = False    // 223d
+          if printSettings.want_rail_joints = False    // 223d
           then begin
             case code of
               eMC_6_RailJoint:
@@ -2458,7 +2458,7 @@ begin
           if rail_joints = (code <> eMC_6_RailJoint) then
             CONTINUE;  // do only the rail joints if rail_joints=True and ignore them otherwise.
 
-          if print_settings_form.output_timbering_checkbox.Checked = False then begin
+          if printSettings.want_timbering = False then begin
             case code of
               eMC_3_TimberOutline,
               eMC_4_TimberCL,
@@ -2478,7 +2478,7 @@ begin
             end;//case
           end;
 
-          if print_settings_form.output_timber_centres_checkbox.Checked = False    // 223d
+          if printSettings.want_timber_centres = False    // 223d
           then begin
             case code of
               eMC_4_TimberCL,
@@ -2489,7 +2489,7 @@ begin
             end;//case
           end;
 
-          if print_settings_form.output_guide_marks_checkbox.Checked = False    // 223d
+          if printSettings.want_guide_marks = False    // 223d
           then begin
             case code of
               eMC_1_GuideMark:
@@ -2497,7 +2497,7 @@ begin
             end;//case
           end;
 
-          if print_settings_form.output_switch_drive_checkbox.Checked = False    // 223d
+          if printSettings.want_switch_drive = False    // 223d
           then begin
             case code of
               eMC_101_SwitchDrive:
@@ -2505,14 +2505,14 @@ begin
             end;//case
           end;
 
-          if print_settings_form.output_chairs_checkbox.Checked = False then begin
+          if printSettings.want_chairs = False then begin
             case code of
               eMC_480_ChairStart.. eMC_499_ChairEnd:
                 CONTINUE;     // no chair outlines wanted  221a
             end;//case
           end;
 
-          if print_settings_form.output_radial_ends_checkbox.Checked = False then begin
+          if printSettings.want_radial_ends = False then begin
             case code of
               eMC_2_RadialEnd,
               eMC_7_TransitionAndSlewing:
@@ -2667,7 +2667,7 @@ begin
             if ((code = eMC__2_CurvingRadiusCentre_1)
               or (code = eMC__3_CurvingRadiusCentre_2)) and
               {(pad_form.print_radial_centres_menu_entry.Checked=True)}// 0.82.b
-              (print_settings_form.output_radial_centres_checkbox.Checked = True)
+              (printSettings.want_radial_centres = True)
 
             // draw curving rad centres...
 
@@ -4054,7 +4054,7 @@ begin          // export background templates...
         CONTINUE;  // not in group. 0.78.b 10-12-02.
 
       if (keeps_list[n].template_info.keep_dims.box_dims1.fb_kludge_template_code > 0)  // 209c
-        and (print_settings_form.output_fb_foot_lines_checkbox.Checked = False) then
+        and (printSettings.want_fb_foot_lines = False) then
         CONTINUE;                                                      // foot lines not wanted.
 
       this_one_platforms_trackbed :=
@@ -4112,9 +4112,9 @@ begin          // export background templates...
             if output_diagram_mode = True then
               pbg_draw_diagram_mode;  // now draw template in diagrammatic mode (main rails).
 
-            if ((print_settings_form.output_centrelines_checkbox.Checked = True) and
+            if ((printSettings.want_centrelines = True) and
               (output_diagram_mode = False) and (box_dims1.align_info.dummy_template_flag =
-              False)) or ((print_settings_form.output_bgnd_shapes_checkbox.Checked = True) and
+              False)) or ((printSettings.want_bgnd_shapes = True) and
               (box_dims1.align_info.dummy_template_flag = True))
             // 212a dummy templates not part of track plan
 
@@ -4183,7 +4183,7 @@ begin          // export background templates...
 
         end;//with template
 
-        if print_settings_form.output_rails_checkbox.Checked = True then begin
+        if printSettings.want_rails = True then begin
           Pen.Mode := pmCopy;
           Pen.Style := psSolid;
 
@@ -4207,11 +4207,11 @@ begin          // export background templates...
               case aq of     // 223d
                 rdAdjTrackTurnoutSideNearGaugeFace, rdAdjTrackTurnoutSideNearOuterFace,
                 rdAdjTrackMainSideNearGaugeFace, rdAdjTrackMainSideNearOuterFace:
-                  if print_settings_form.output_platforms_checkbox.Checked = False then
+                  if printSettings.want_platforms = False then
                     CONTINUE;         // platforms not wanted
                 rdAdjTrackTurnoutSideFarGaugeFace, rdAdjTrackTurnoutSideFarOuterFace,
                 rdAdjTrackMainSideFarGaugeFace, rdAdjTrackMainSideFarOuterFace:
-                  if print_settings_form.output_trackbed_edges_checkbox.Checked = False then
+                  if printSettings.want_trackbed_edges = False then
                     CONTINUE;    // trackbed edges not wanted
               end;//case
 
@@ -4250,13 +4250,13 @@ begin          // export background templates...
                   rdAdjTrackMainSideFarGaugeFace] do begin
                 case rail of     // 223d
                   rdAdjTrackTurnoutSideNearGaugeFace, rdAdjTrackMainSideNearGaugeFace:
-                    if print_settings_form.output_platforms_checkbox.Checked = True then
+                    if printSettings.want_platforms = True then
                       pbg_draw_fill_rail;        // platforms
                   rdAdjTrackTurnoutSideFarGaugeFace, rdAdjTrackMainSideFarGaugeFace:
                     if not ((output_diagram_mode = True) and
                       (output_include_trackbed_edges = False))
                     then begin
-                      if print_settings_form.output_trackbed_edges_checkbox.Checked = True then
+                      if printSettings.want_trackbed_edges = True then
                         pbg_draw_fill_rail;   // trackbed edges
                     end;
                 end;//case
@@ -4322,7 +4322,7 @@ begin          // export background templates...
 
   // finally add the rail-joint marks over the rail infill...   // 209c moved outside loop
 
-  if (print_settings_form.output_rails_checkbox.Checked = True) and
+  if (printSettings.want_rails = True) and
     (output_diagram_mode = False) then
     export_bgnd_marks(on_canvas, canvas_height, grid_left, grid_top, max_list_index, True);
 

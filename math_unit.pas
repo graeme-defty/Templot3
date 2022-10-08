@@ -1314,7 +1314,7 @@ uses
   plain_track_unit,
   edit_memo_unit,
   keep_select,
-  print_settings_unit,
+  print_settings,
   panning_unit,
   action_unit,
   preview_unit,
@@ -10581,7 +10581,7 @@ begin
   with pad_form do begin
     if ((out_factor < 0.7) or (fit_single_sheet = True)) and
       {(print_timbering_menu_entry.Checked=True)}// 0.82.b
-      (print_settings_form.output_timbering_checkbox.Checked = True) then begin
+      printSettings.want_timbering then begin
       if out_factor < 0.7 then
         size_str := round_str(out_factor * 100, 2) + '% of full-size'
       else

@@ -167,7 +167,7 @@ implementation
 uses
   Printers, Clipbrd, control_room, pad_unit, entry_sheet, help_sheet, chat_unit,
   math_unit, alert_unit,
-  colour_unit, keep_select, info_unit, print_unit, shove_timber, print_settings_unit,
+  colour_unit, keep_select, info_unit, print_unit, shove_timber,
   shoved_timber,
   template;
 

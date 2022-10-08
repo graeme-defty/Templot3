@@ -1,4 +1,4 @@
-object print_settings_form: Tprint_settings_form
+object printSettingsForm: TprintSettingsForm
   Left = 334
   Height = 679
   Top = 234
@@ -252,6 +252,7 @@ object print_settings_form: Tprint_settings_form
     Width = 51
     Caption = 'rails'
     Checked = True
+    OnChange = output_rails_checkboxChange
     State = cbChecked
     TabOrder = 1
   end
@@ -262,6 +263,7 @@ object print_settings_form: Tprint_settings_form
     Width = 137
     Caption = 'track  centre-lines'
     Checked = True
+    OnChange = output_centrelines_checkboxChange
     State = cbChecked
     TabOrder = 3
   end
@@ -272,6 +274,7 @@ object print_settings_form: Tprint_settings_form
     Width = 85
     Caption = 'timbering'
     Checked = True
+    OnChange = output_timbering_checkboxChange
     OnClick = output_timbering_checkboxClick
     State = cbChecked
     TabOrder = 4
@@ -282,6 +285,7 @@ object print_settings_form: Tprint_settings_form
     Top = 379
     Width = 115
     Caption = 'radial  centres'
+    OnChange = output_radial_centres_checkboxChange
     TabOrder = 16
   end
   object output_bgnd_shapes_checkbox: TCheckBox
@@ -291,6 +295,7 @@ object print_settings_form: Tprint_settings_form
     Width = 151
     Caption = 'background  shapes'
     Checked = True
+    OnChange = output_bgnd_shapes_checkboxChange
     State = cbChecked
     TabOrder = 19
   end
@@ -301,6 +306,7 @@ object print_settings_form: Tprint_settings_form
     Width = 254
     Caption = 'rail-foot  edges  on  flat-bottom  rails'
     Checked = True
+    OnChange = output_fb_foot_lines_checkboxChange
     State = cbChecked
     TabOrder = 10
   end
@@ -311,6 +317,7 @@ object print_settings_form: Tprint_settings_form
     Width = 139
     Caption = 'radial  end  marks'
     Checked = True
+    OnChange = output_radial_ends_checkboxChange
     State = cbChecked
     TabOrder = 11
   end
@@ -321,6 +328,7 @@ object print_settings_form: Tprint_settings_form
     Width = 110
     Caption = 'switch  labels'
     Checked = True
+    OnChange = output_switch_labels_checkboxChange
     State = cbChecked
     TabOrder = 12
   end
@@ -331,6 +339,7 @@ object print_settings_form: Tprint_settings_form
     Width = 139
     Caption = 'sketchboard items'
     Checked = True
+    OnChange = output_sketchboard_items_checkboxChange
     State = cbChecked
     TabOrder = 20
   end
@@ -341,6 +350,7 @@ object print_settings_form: Tprint_settings_form
     Width = 135
     Caption = 'V-crossing  labels'
     Checked = True
+    OnChange = output_xing_labels_checkboxChange
     State = cbChecked
     TabOrder = 13
   end
@@ -351,6 +361,7 @@ object print_settings_form: Tprint_settings_form
     Width = 114
     Caption = 'chair  outlines'
     Enabled = False
+    OnChange = output_chairs_checkboxChange
     TabOrder = 9
   end
   object output_timber_centres_checkbox: TCheckBox
@@ -360,6 +371,7 @@ object print_settings_form: Tprint_settings_form
     Width = 147
     Caption = 'timber  centre-lines'
     Checked = True
+    OnChange = output_timber_centres_checkboxChange
     State = cbChecked
     TabOrder = 5
   end
@@ -370,6 +382,7 @@ object print_settings_form: Tprint_settings_form
     Width = 128
     Caption = 'timber  numbers'
     Checked = True
+    OnChange = output_timber_numbers_checkboxChange
     OnClick = output_timber_numbers_checkboxClick
     State = cbChecked
     TabOrder = 7
@@ -381,6 +394,7 @@ object print_settings_form: Tprint_settings_form
     Width = 229
     Caption = 'timber-outline  extension  marks'
     Checked = True
+    OnChange = output_timber_extensions_checkboxChange
     State = cbChecked
     TabOrder = 6
   end
@@ -391,6 +405,7 @@ object print_settings_form: Tprint_settings_form
     Width = 83
     Caption = 'rail joints'
     Checked = True
+    OnChange = output_rail_joints_checkboxChange
     State = cbChecked
     TabOrder = 2
   end
@@ -401,6 +416,7 @@ object print_settings_form: Tprint_settings_form
     Width = 106
     Caption = 'guide  marks'
     Checked = True
+    OnChange = output_guide_marks_checkboxChange
     State = cbChecked
     TabOrder = 14
   end
@@ -411,6 +427,7 @@ object print_settings_form: Tprint_settings_form
     Width = 140
     Caption = 'switch-drive  mark'
     Checked = True
+    OnChange = output_switch_drive_checkboxChange
     State = cbChecked
     TabOrder = 15
   end
@@ -421,6 +438,7 @@ object print_settings_form: Tprint_settings_form
     Width = 181
     Caption = 'with  template  ID  prefix'
     Checked = True
+    OnChange = output_timb_id_prefix_checkboxChange
     State = cbChecked
     TabOrder = 8
   end
@@ -431,6 +449,7 @@ object print_settings_form: Tprint_settings_form
     Width = 83
     Caption = 'platforms'
     Checked = True
+    OnChange = output_platforms_checkboxChange
     State = cbChecked
     TabOrder = 17
   end
@@ -441,6 +460,7 @@ object print_settings_form: Tprint_settings_form
     Width = 214
     Caption = 'trackbed edges / ballast / cess'
     Checked = True
+    OnChange = output_trackbed_edges_checkboxChange
     State = cbChecked
     TabOrder = 18
   end

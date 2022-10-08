@@ -131,7 +131,7 @@ uses
   config_unit,
   colour_unit, info_unit, pad_unit, control_room, alert_unit, preview_unit,
   print_unit, calibration_unit, Printers,
-  help_sheet, math_unit, entry_sheet, print_settings_unit;
+  help_sheet, math_unit, entry_sheet, print_settings;
 
 //_____________________________________________________________________________________
 

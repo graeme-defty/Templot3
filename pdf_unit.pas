@@ -178,7 +178,7 @@ uses
   //bgkeeps_unit,
   help_sheet, stay_visible_unit, panning_unit, shove_timber, grid_unit,
   //edit_memo_unit,
-  print_settings_unit, print_unit,
+  print_settings, print_unit,
   //entry_sheet,
   export_unit,
 
@@ -574,7 +574,7 @@ function wanted_mark(code: EMarkCode): Boolean;     // decide if a particular ma
 begin
   Result := True;
 
-  with print_settings_form do begin
+  with printSettings do begin
     ;
     case code of
       //-5 .. 0: // no name label, timber selector, curve rad or peg centre, blank
@@ -582,52 +582,52 @@ begin
         // no name label, timber selector, curve rad or peg centre, blank
         Result := False;
       eMC_1_GuideMark:
-        Result := output_guide_marks_checkbox.Checked;
+        Result := want_guide_marks;
       eMC_2_RadialEnd:
-        Result := output_radial_ends_checkbox.Checked;
+        Result := want_radial_ends;
       eMC_3_TimberOutline:
-        Result := output_timbering_checkbox.Checked;
+        Result := want_timbering;
       eMC_4_TimberCL:
-        Result := output_timbering_checkbox.Checked and
-          output_timber_centres_checkbox.Checked;
+        Result := want_timbering and
+          want_timber_centres;
       eMC_5_TimberReducedEnd:
-        Result := output_timbering_checkbox.Checked;
+        Result := want_timbering;
       eMC_6_RailJoint:
-        Result := output_rail_joints_checkbox.Checked;
+        Result := want_rail_joints;
       eMC_7_TransitionAndSlewing:
-        Result := output_radial_ends_checkbox.Checked;
+        Result := want_radial_ends;
       eMC_8_PegArm_1,
       eMC_9_PegArm_2,
       eMC_10_PlainTrackStart:
         Result := False;
       eMC_14_TimberCLMidline:
-        Result := output_timbering_checkbox.Checked and
-          output_timber_centres_checkbox.Checked;
+        Result := want_timbering and
+          want_timber_centres;
       eMC_33_SelectedTimberOutline:
-        Result := output_timbering_checkbox.Checked;
+        Result := want_timbering;
       eMC_44_ShovingTimberCL,
       eMC_54_ShovingTimberCLMidline:
-        Result := output_timbering_checkbox.Checked and
-          output_timber_centres_checkbox.Checked;
+        Result := want_timbering and
+          want_timber_centres;
       eMC_55_ReducedEnd,
       eMC_93_ShovedTimberOutline,
       eMC_95_ReducedEndInfill,
       eMC_99_TimberNumber:
-        Result := output_timbering_checkbox.Checked;
+        Result := want_timbering;
       eMC_101_SwitchDrive:
-        Result := output_switch_drive_checkbox.Checked;
+        Result := want_switch_drive;
       eMC_203_TimberInfill,
       eMC_233_ShovedTimberInfill,
       eMC_293_ShovedTimberInfill:
-        Result := output_timbering_checkbox.Checked;
+        Result := want_timbering;
       eMC_480_ChairStart .. eMC_499_ChairEnd:
-        Result := output_chairs_checkbox.Checked;
+        Result := want_chairs;
       eMC_501_MSWorkingEnd .. eMC_508_DSWingRail:
         Result := False;
       eMC_600_LongMark .. eMC_605_SwitchLabelEnd:
-        Result := output_switch_labels_checkbox.Checked;
+        Result := want_switch_labels;
       eMC_700_XingLongMark .. eMC_703_XingLabelEnd:
-        Result := output_xing_labels_checkbox.Checked;
+        Result := want_xing_labels;
       else
         show_modal_message('Unhandled code ' + IntToStr(Ord(code)) + 'in pdf_unit.wanted_mark().');
     end;
@@ -1184,7 +1184,7 @@ var
 
             if (pad_form.print_timber_numbering_menu_entry.Checked or
               ((out_factor > 0.99) and pad_form.numbering_fullsize_only_menu_entry.Checked))
-              and print_settings_form.output_timber_numbers_checkbox.Checked   // 223d
+              and printSettings.want_timber_numbers   // 223d
 
             then begin
 
@@ -2445,9 +2445,9 @@ begin
               // print all the background timbering and marks except rail joints.
 
               if {pad_form.print_track_centre_lines_menu_entry.Checked=True}  // 0.82.b
-              (print_settings_form.output_centrelines_checkbox.Checked and
+              (printSettings.want_centrelines and
                 (not dummy_template))       // 212a
-                or (print_settings_form.output_bgnd_shapes_checkbox.Checked and
+                or (printSettings.want_bgnd_shapes and
                 dummy_template) then begin
 
                 if dummy_template   // 212a
@@ -2479,7 +2479,7 @@ begin
               end;//if track centre-lines.
 
               if {pad_form.print_rails_menu_entry.Checked=True}  // 0.82.b
-              print_settings_form.output_rails_checkbox.Checked then begin
+              printSettings.want_rails then begin
                 //  draw turnout rails...
                 set_pen_width(max(printrail_wide, min_penwidth));
 
@@ -2496,11 +2496,11 @@ begin
                     case aq of     // 223d
                       rdAdjTrackTurnoutSideNearGaugeFace, rdAdjTrackTurnoutSideNearOuterFace,
                       rdAdjTrackMainSideNearGaugeFace, rdAdjTrackMainSideNearOuterFace:
-                        if not print_settings_form.output_platforms_checkbox.Checked then
+                        if not printSettings.want_platforms then
                           CONTINUE;         // platforms not wanted
                       rdAdjTrackTurnoutSideFarGaugeFace, rdAdjTrackTurnoutSideFarOuterFace,
                       rdAdjTrackMainSideFarGaugeFace, rdAdjTrackMainSideFarOuterFace:
-                        if not print_settings_form.output_trackbed_edges_checkbox.Checked then
+                        if not printSettings.want_trackbed_edges then
                           CONTINUE;    // trackbed edges not wanted
                     end;//case
 
@@ -2533,10 +2533,10 @@ begin
                         rdAdjTrackMainSideFarGaugeFace] do begin
                       case rail of     // 223d
                         rdAdjTrackTurnoutSideNearGaugeFace, rdAdjTrackMainSideNearGaugeFace:
-                          if print_settings_form.output_platforms_checkbox.Checked then
+                          if printSettings.want_platforms then
                             draw_fill_rail;        // platforms
                         rdAdjTrackTurnoutSideFarGaugeFace, rdAdjTrackMainSideFarGaugeFace:
-                          if print_settings_form.output_trackbed_edges_checkbox.Checked then
+                          if printSettings.want_trackbed_edges then
                             draw_fill_rail;   // trackbed edges
                       end;//case
                     end;
@@ -3138,7 +3138,7 @@ var
   saved_cursor:TCursor;
 
 begin
-  if print_settings_form.output_sketchboard_items_checkbox.Checked=False then EXIT;
+  if printSettings.want_sketchboard_items_checkbox.Checked=False then EXIT;
 
   if pdf_form.include_sketchboard_items_checkbox.Checked=False then EXIT;
 
@@ -3294,7 +3294,7 @@ var
   // OT-OUT  rotated_emf:TMetafile;
 
 begin
-  if not print_settings_form.output_bgnd_shapes_checkbox.Checked then
+  if not printSettings.want_bgnd_shapes then
     EXIT;
 
   maxbg_index := bgnd_form.bgnd_shapes_listbox.Items.Count - 1;
@@ -3922,13 +3922,13 @@ begin
               if (pad_form.print_timber_numbering_menu_entry.Checked
                 or ((out_factor > 0.99)
                 and pad_form.numbering_fullsize_only_menu_entry.Checked))
-                and print_settings_form.output_timber_numbers_checkbox.Checked
+                and printSettings.want_timber_numbers
 
               then begin
                 p1 := list_bgnd_marks[i].p1;    // x1,y1 in  1/100ths mm
                 p2 := list_bgnd_marks[i].p2;
 
-                if print_settings_form.output_timb_id_prefix_checkbox.Checked then
+                if printSettings.want_timb_id_prefix then
                   move_to := page_locate(p2, grid_left, grid_top)
                 else
                   // 223d  ID prefix not wanted, use p1 *screen* positions (as for control template)
@@ -3963,7 +3963,7 @@ begin
                     //Font.Size:=Round(fontsize);
                   end;
 
-                  if print_settings_form.output_timb_id_prefix_checkbox.Checked
+                  if printSettings.want_timb_id_prefix
                   // 223d
                   then begin
                     if num_str = '' then
@@ -5199,7 +5199,7 @@ begin          // print background templates...
 
       //if (Ttemplate(keeps_list.Objects[n]).template_info.keep_dims.box_dims1.fb_kludge_template_code > 0)  // 209c
       if (this_template.template_info.keep_dims.box_dims1.fb_kludge_template_code > 0)  // 209c
-        and (not print_settings_form.output_fb_foot_lines_checkbox.Checked) then
+        and (not printSettings.want_fb_foot_lines) then
         CONTINUE;                                                      // foot lines not wanted.
 
       this_one_platforms_trackbed :=
@@ -5266,10 +5266,10 @@ begin          // print background templates...
             if output_diagram_mode then
               pbg_draw_diagram_mode;  // first draw template in diagrammatic mode.
 
-            if (print_settings_form.output_centrelines_checkbox.Checked and
+            if (printSettings.want_centrelines and
               (not output_diagram_mode) and (not
               box_dims1.align_info.dummy_template_flag)) or
-              (print_settings_form.output_bgnd_shapes_checkbox.Checked and
+              (printSettings.want_bgnd_shapes and
               box_dims1.align_info.dummy_template_flag)
             // 212a dummy templates not part of track plan
 
@@ -5318,7 +5318,7 @@ begin          // print background templates...
 
         end;//with template
 
-        if print_settings_form.output_rails_checkbox.Checked then begin
+        if printSettings.want_rails then begin
 
           //drawn_full_aq1:=True;    // default init flags.
           //drawn_full_aq2:=True;
@@ -5345,11 +5345,11 @@ begin          // print background templates...
               case aq of     // 223d
                 rdAdjTrackTurnoutSideNearGaugeFace, rdAdjTrackTurnoutSideNearOuterFace,
                 rdAdjTrackMainSideNearGaugeFace, rdAdjTrackMainSideNearOuterFace:
-                  if not print_settings_form.output_platforms_checkbox.Checked then
+                  if not printSettings.want_platforms then
                     CONTINUE;         // platforms not wanted
                 rdAdjTrackTurnoutSideFarGaugeFace, rdAdjTrackTurnoutSideFarOuterFace,
                 rdAdjTrackMainSideFarGaugeFace, rdAdjTrackMainSideFarOuterFace:
-                  if not print_settings_form.output_trackbed_edges_checkbox.Checked then
+                  if not printSettings.want_trackbed_edges then
                     CONTINUE;    // trackbed edges not wanted
               end;//case
 
@@ -5388,11 +5388,11 @@ begin          // print background templates...
                 case rail of
                   rdAdjTrackTurnoutSideNearGaugeFace,
                   rdAdjTrackMainSideNearGaugeFace:
-                    if print_settings_form.output_platforms_checkbox.Checked then
+                    if printSettings.want_platforms then
                       pbg_draw_fill_rail;        // platforms
                   rdAdjTrackTurnoutSideFarGaugeFace,
                   rdAdjTrackMainSideFarGaugeFace:
-                    if print_settings_form.output_trackbed_edges_checkbox.Checked then
+                    if printSettings.want_trackbed_edges then
                       pbg_draw_fill_rail;   // trackbed edges
                 end; // case
               end;
@@ -5459,7 +5459,7 @@ begin          // print background templates...
 
   // finally add the rail-joint marks over the rail infill...   // 209c moved outside loop
 
-  if print_settings_form.output_rails_checkbox.Checked and (not output_diagram_mode) then
+  if printSettings.want_rails and (not output_diagram_mode) then
     pdf_bgnd_marks(grid_left, grid_top, max_list_index, True, pdf_page);
 
 end;

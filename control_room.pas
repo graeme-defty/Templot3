@@ -675,7 +675,7 @@ uses
   action_unit,
   mint_unit,
   jotter_unit,
-  print_settings_unit,
+  print_settings,
   prefs_unit,
   plain_track_unit,
   calibration_unit,

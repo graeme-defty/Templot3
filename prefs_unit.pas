@@ -93,7 +93,7 @@ implementation
 
 uses
   config_unit,
-  control_room, pad_unit, alert_unit, bgnd_unit, math_unit, print_settings_unit, help_sheet, keep_select,
+  control_room, pad_unit, alert_unit, bgnd_unit, math_unit, print_settings, help_sheet, keep_select,
 
   { OT-FIRST dtpFreehandShape,dtp_settings_unit,dtp_unit,} gauge_unit, colour_unit, preview_unit,
   bgkeeps_unit, startup_unit, action_unit, make_slip_unit;
