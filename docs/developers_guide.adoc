@@ -8,44 +8,7 @@ employed on the project.
 
 Details of how to install a working environment are described in the document "Getting Started".
 
-== Coding Conventions
-
-=== Formatting (JEDI)
-
-The OpenTemplot project makes heavy use of the JEDI code formatter
-(which is built into the Lazarus IDE) and it is important that all developers
-make use of standard JEDI configuration settings to ensure consistency across
-the code base to avoid code being unneccessarily reformatted over and over .
-
-It is worth getting into the habit of using Ctrl-D *regularly* as you work
-on the code, rather than reformatting it all at the end.
-This will ensure that your changes stay in line with the project standards as you work.
-
-To (slightly mis-)quote the Go-lang community, the format is nobody's favourite,
-but everyone loves the fact that it exists.
-
-In order to configure JEDI, the settings file you need is provided in
-the project's root directory (OT-jcfsettings.cfg). To make use of this file, you need
-to copy it into the appropriate directory as jcfsettings.cfg.
-
-This directory again varies by platform. You can find where it lives on your system by
-opening Lazarus and using the menu
-
-     Source -> JEDI Code Format -> Format Settings
-
-The window will show you where the settings file lives.
-
-=== Identifiers Etc
-
-The code base has been the subject of a number of practices/conventions over time,
-so it is not necessarily true that what you see there is the direction we wish to go.
-
-In general look at recent changes to get the feel of what practices are preferred.
-If no example exists for what you want, the standards found at
-
-	https://edn.embarcadero.com/article/10280
-
-are a useful guide.
+== Workflow
 
 === Scripts
 
@@ -82,3 +45,480 @@ This script gets a list of these directories from the included file **'scripts/u
 Whenever modules of the first or third type are added or created, it is important that
 units-list.py source be updated appropriately.
 
+== Coding Conventions
+
+=== Formatting (JEDI)
+
+The OpenTemplot project makes heavy use of the JEDI code formatter
+(which is built into the Lazarus IDE) and it is important that all developers
+make use of standard JEDI configuration settings to ensure consistency across
+the code base to avoid code being unneccessarily reformatted over and over .
+
+It is worth getting into the habit of using Ctrl-D *regularly* as you work
+on the code, rather than reformatting it all at the end.
+This will ensure that your changes stay in line with the project standards as you work.
+
+To (slightly mis-)quote the Go-lang community, the format is nobody's favourite,
+but everyone loves the fact that it exists.
+
+In order to configure JEDI, the settings file you need is provided in
+the project's root directory (OT-jcfsettings.cfg). To make use of this file, you need
+to copy it into the appropriate directory as jcfsettings.cfg.
+
+This directory again varies by platform. You can find where it lives on your system by
+opening Lazarus and using the menu
+
+     Source -> JEDI Code Format -> Format Settings
+
+The window will show you where the settings file lives.
+
+=== Identifiers / Naming Etc
+
+The code base has been the subject of a number of practices/conventions over time,
+so it is not necessarily true that what you see there is the direction we wish to go.
+
+In general look at recent changes to get the feel of what practices are preferred.
+If no example exists for what you want, the standards found at
+
+	https://edn.embarcadero.com/article/10280
+
+are a useful guide.
+
+==== Names
+
+The following is taken from *The Practice of Programming* by Brian W. Kernighan and Rob pike, which is available on
+https://docs.google.com/file/d/0B2Q8Nd2L-6PjN2I0MzEzZDYtM2JhNC00NzJlLWFhMGQtZWUyMWE0N2M4MGM4/edit?pli=1&resourcekey=0-nI6_nLr10AvVsHXp1-VLbw[Google books].
+
+NOTE: these extracts use the convention of indicating lines illustrating bad practice by prefixing with a '?' character.
+
+====
+*1.1 Names*
+
+What's in a name? A variable or function name labels an object and conveys
+information about its purpose. A name should be informative, concise, memorable,
+and pronounceable if possible. Much information comes from context and scope; the
+broader the scope of a variable, the more information should be conveyed by its name.
+
+*_Use descriptive names for globals, short names for locals._* Global variables, by definition,
+can crop up anywhere in a program, so they need names long enough and descriptive enough
+to remind the reader of their meaning. It's also helpful to include a brief comment
+with the declaration of each global:
+----
+	int npending = 0; // current length of input queue
+----
+Global functions,. classes, and structures should also have descriptive names that suggest
+their role in a program.
+
+By contrast, shorter names suffice for local variables; within a function, `*n*` may be
+sufficient, `*npoints*` is fine, and `*numberOfPoints*` is overkill.
+
+Local variables used in conventional ways can have very short names. The use of
+`*i*` and `*j*` for loop indices, `*p*` and `*q*` for pointers, and `*s*` and `*t*` for strings is so frequent
+that there is little profit and perhaps some loss in longer names. Compare
+----
+? 	for (theElementIndex = 0; theElementIndex < number0fElements;
+? 	theElementIndex++)
+? 	elementArray[theElementIndex] = theElementIndex;
+----
+with
+----
+	for (i = 0; i < nelems; i++)
+	  elem[i] = i;
+----
+
+Programmers are often encouraged to use long variable names regardless of context.
+That is a mistake: clarity is often achieved through brevity.
+
+	<= SNIP =>
+
+*_Be consistent._* Give related things related names that show their relationship and high-
+light their difference.
+
+Besides being much too long, the member names in this Java class are wildly
+inconsistent:
+----
+? 	class UserQueue {
+? 	  int noOfIternsInQ, frontOiTheQueue, queuecapacity;
+? 	  public int noOfUsersInQueue() {...}
+? 	}
+----
+
+The word "queue" appears as Q. Queue and queue. But since queues can only be
+accessed from a variable of type UserQueue, member names do not need to mention
+"queue" at all; context suffices, so
+----
+?	queue.queueCapacity
+----
+is redundant. This version is better:
+----
+	class UserQueue {
+	  int nitems, front, capacity;
+	  public int nusers() {. . .}
+	}
+----
+since it leads to statements like
+----
+	queue.capacity++;
+	n = queue.nusers();
+----
+No clarity is lost. This example still needs work, however: "items" and "users" are
+the same thing, so only one term should be used for a single concept.
+
+
+*_Use active names for functions._* Function names should be based on active verbs,
+perhaps followed by nouns:
+----
+	now = date.getTime() ;
+	putchar('\n') ;
+----
+Functions that return a boolean (true or false) value should be named so that the return
+value is unambiguous. Thus
+----
+?	if (checkoctal(c)) ...
+----
+does not indicate which value is true and which is false, while
+----
+	if (isoctal (c)) ...
+----
+makes it clear that the function returns true if the argument is octal and false if not.
+
+*_Be accurate._* A name not only labels, it conveys information to the reader.
+A misleading name can result in mystifying bugs.
+
+One of us wrote and distributed for years a macro called `*isoctal*` with this incorrect implementation:
+----
+? 	#define isoctal(c) ((c) >= '0' && (c) <= '8')
+----
+instead of the proper
+----
+? 	#define isoctal(c) ((c) >= '0' && (c) <= '7')
+----
+
+In this case, the name conveyed the correct intent but the implementation was wrong;
+it's easy for a sensible name to disguise a broken implementation.
+
+Here's an example in which the name and the code are in complete contradiction:
+----
+? 	public boolean inTable(0bject obj) {
+? 	int j = this .getIndex(obj) ;
+7 	return (j == nTable);
+? 	}
+----
+The function `*getIndex*` returns a value between zero and `*nTable-1*` if it finds the
+object, and returns `*nTable*` if not. The boolean value returned by `*inTable*` is thus the
+opposite of what the name implies. At the time the code is written, this might not
+cause trouble, but if the program is modified later, perhaps by a different programmer,
+the name is sure to confuse.
+====
+
+==== Capitalisation
+In naming pascal objects, the compiler ignores capitalisation. We adopt the following conventions:
+
+[cols="2,3,3"]
+|====
+| Object | Convention | Example
+
+| Procedures / Functions | Pascal Case | ButtonClick, CalcOffset
+| Variables | camel case | endPoint, slopeAngle
+| Enumerations
+a|
+Enum type - Enum name with "E" prefix +
+Enum values - Enum initials in lower case then value name in Pascal case
+
+a|
+----
+EMySpecialEnum = (
+  mseValue1,
+  mseValue2,
+  ...
+  );
+----
+----
+ERailData = (
+  rdStraightStockGaugeFace,
+  rdCurvedStockGaugeFace,
+  ...
+  );
+----
+
+|====
+
+==== Abbreviations
+
+Abbreviations are a key, and perhaps even essential part of communications. However, when programming
+it is very easy to create code which is misleading and if not impossible, then very hard to read.
+The main culprit is the arbitrary shortening of names in arbitrary ways. As noted above, being consise is desirable,
+but not if it comes at the cost of readability.
+
+We consider two types of abbreviation:
+
+generic abbreviations:: everyday abbreviations which most people would be expected to understand, such as
+
+** avg for average
+** info for information
+** sqrt for square root
+** etc for et cetera
+** etc
+
+See below for a table of generic abbreviations which may be used. Other abbreviations should be avoided.
+To add a new abbreviation to this list, raise an issue on GitHub.
+
+domain-specific abbreviations:: anyone working in the computer domain understands
+** int for integer
+** bool for boolean
+** func for function
+** etc
+
+Every industry/domain has its own vocabulary and abbreviations and in this project we are dealing with railways,
+and more specifically railway tracks, so it is reasonable to use abbreviations such as
+
+** TS for turnout side
+** CL for centreline
+** etc
+
+See below for a table of railway/track abbreviations which may be used. Other abbreviations should be avoided.
+To add a new abbreviation to this list, raise an issue on GitHub.
+
+===== Generic Abbreviations
+
+Derived from the GitHub repo https://github.com/kisvegabor/abbreviations-in-code[abbreviations-in-code].
+
+NOTE: NOTE: Words of less than 6 characters or whose abbreviation saved less than 1/3 of the letters were omitted.
+
+[cols="^1,^2"]
+|====
+| Abbreviation | Meaning
+
+| abs 	| absolute
+| addr 	| address
+| alloc | allocate
+| alt 	| alternate
+| arg 	| argument
+| attr 	| attribute
+| app 	| application
+| auth 	| authenticate
+| avg 	| average
+| bg 	| background
+| bin 	| binary
+| bool 	| boolean
+| btn 	| button
+| buf 	| buffer
+| char 	| character
+| calc 	| calculate
+| cert 	| certificate
+| cfg 	| configuration
+| chan 	| channel
+| cmd 	| command
+| cmp 	| compare
+| cnt 	| counter
+| concat| concatenate
+| config| configuration
+| conn 	| connection
+| cont 	| continue
+| col 	| column
+| coll 	| collection
+| config| configuration
+| coord | coordinate
+| cos 	| cosine
+| cksum | checksum
+| ctrl 	| control
+| ctx 	| context
+| curr 	| current
+| db 	| database
+| dec 	| decimal
+| dec 	| decrease
+| dflt	| default
+| def 	| define
+| del 	| delete
+| dest 	| destination
+| dev 	| device
+| dev 	| development
+| diff 	| difference
+| dir 	| directory
+| disp 	| display
+| doc 	| document
+| drv 	| driver
+| dsc 	| descriptor
+| desc 	| description
+| dt 	| delta time
+| env 	| environment
+| expr 	| e xpression
+| fig 	| f igure
+| fmt 	| f ormat
+| func 	| function
+| ge 	| greater or equal
+| gen 	| generate
+| gt 	| greater then
+| h 	| height
+| hex 	| hexadecimal
+| hdr 	| header
+| hor 	| horizontal
+| hw 	| hardware
+| id 	| identifier
+| iface | interface
+| inc 	| increase, include
+| info 	| information
+| init 	| initialize
+| int 	| integer
+| k 	| object key, only together with v for value
+| lang 	| language
+| lat 	| latitude
+| lib 	| library
+| le 	| less or equal
+| len 	| length
+| lt 	| less than
+| lon 	| longitude
+| math 	| mathematics
+| max 	| maximum
+| mem 	| memory
+| mcu 	| microcontroller
+| mid 	| middle
+| min 	| minimum
+| misc 	| miscellaneous
+| mgr 	| manager
+| mod 	| modulo
+| msg 	| message
+| n 	| no (only in pair with yes)
+| ne 	| not equal
+| net 	| network
+| num 	| number
+| obj 	| object
+| op 	| operation
+| os 	| operating system
+| p 	| pointer
+| param | parameter
+| pic 	| picture
+| pos 	| position
+| pred 	| prediction
+| pref 	| preference
+| prev 	| previous
+| proc 	| process
+| prof 	| profiler
+| ptr 	| pointer
+| r 	| radius
+| rect 	| rectangle
+| recv 	| receive
+| rem 	| remove
+| res 	| result/response
+| ret 	| return
+| rev 	| revision
+| req 	| required/request(ed)
+| s 	| signed as prefix (s8 variable type)
+| sem 	| semaphore
+| sel 	| selection/selected
+| seq 	| sequence
+| stat 	| statistic(s)
+| std 	| standard
+| str 	| string
+| sqrt 	| square root
+| src 	| source
+| sync 	| synchronize
+| t 	| time or type (e.g. uint8_t)
+| temp 	| temporary
+| temp 	| temperature
+| tgl 	| toggle
+| tmp 	| temporary
+| ts 	| timestamp
+| u 	| unsigned as prefix (e.g. uint8_t)
+| v 	| value, only together with k for key
+| var 	| variable
+| v 	| version
+| vec 	| vector
+| vert 	| vertical
+| w 	| window
+| y 	| yes (only in pair with no)
+|====
+
+
+NOTE: *ALISTAIR* The following 3 tables will be removed once you are OK with all this.
+
+*Items removed from the list (or replaced)*
+
+[cols="^1,^2"]
+|====
+|Abbreviation|Meaning
+
+|act | active
+|bat | battery
+|ch  | character
+|cb  | callback
+|con | connection
+|conv| conversation
+|com | (could be common, comercial, communication)
+|conf| configuration
+|csum| checksum
+|cur | current
+|cpy | copy (saves only one character)
+|def | default
+|dis | disable
+|dt  | delta time
+|e.g.| example (in comments)
+|en  | enable
+|f   | function
+|fp  | function pointer
+|i   | integer iterator
+|j   | integer iterator, only together with i
+|k   | integer iterator, only together with i and j
+|ll  | (could be linked list or less then)
+|mng | manager
+|v   | version, vector
+|====
+
+
+*Items removed for breaking the ">6 chars and > 1/3 saving" rule*
+[cols="^1,^2"]
+|====
+|Abbreviation|Meaning
+
+|circ| circle
+|e 	 | event
+|f   | file
+|idx | index
+|ord | order
+|pwr | power
+|q   | query
+|qry | query
+|rng | range
+|tmr | timer
+|w   | width
+|====
+
+
+*Items breaking the ">6 chars and > 1/3 saving rule" but I think should be in the list anyway as they are ubiquitous*
+[cols="^1,^2"]
+|====
+|Abbreviation|Meaning
+
+| arr | array
+| brk | break
+| clr | clear
+| dbg | debug
+| eq  | equal
+| err | error
+| ix  | index
+| img | image
+| px  | pixel
+| rand| random
+| sin | sine
+| txt | text
+| usr | user
+| val | value
+|====
+
+===== Domain-Specific Abbreviations
+
+Note some of these termas relate to track design and construction and some are specific to
+I don't expect the lists above to change much over time.
+The list below is more likely to expand since it will be hard to come up with all likely
+candidates up front, and we will find more examples in the source as we progress
+(and I am sick of doing bloody tables!)
+
+[cols="^1,^2"]
+|====
+|Abbreviation|Meaning
+
+| bg | background
+| MS | main line side
+| TS | turnout side
+2+| ============= more to come ============
+|====
